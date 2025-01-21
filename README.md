@@ -1,5 +1,7 @@
 # weighttrack.app
 
+Built with Gatsby, Tailwind, Shadcn, and TypeScript.
+
 ## Running this 
 
 ```bash

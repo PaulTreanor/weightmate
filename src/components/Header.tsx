@@ -21,8 +21,8 @@ export default function Header({ unit, setUnit }: HeaderProps) {
                         <SelectItem value="stone">stone</SelectItem>
                     </SelectContent>
                 </Select>
-            <h1 className="text-2xl font-bold">WeightTracker.app</h1>
-            <Button variant="outline">Log out</Button>
+                <h1 className="text-3xl font-bold text-center">WeightTrack.app</h1>
+                <Button variant="outline">Log out</Button>
             </div>
         </header>
     )
