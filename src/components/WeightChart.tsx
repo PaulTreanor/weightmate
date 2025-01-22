@@ -10,10 +10,12 @@ type WeightChartProps = {
 }
 
 export default function WeightChart({ data }: WeightChartProps) {
-	const chartData = data.map((entry) => ({
-		date: new Date(entry.date).toLocaleDateString(),
-		weight: entry.weight
-	}))
+	const chartData = data
+		.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+		.map((entry) => ({
+			date: new Date(entry.date).getTime(),
+			weight: entry.weight
+		}))
 
 	return (
 		<Card className="w-full mb-8">
@@ -33,7 +35,13 @@ export default function WeightChart({ data }: WeightChartProps) {
 					<ResponsiveContainer width="100%" height="100%">
 						<LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
 							<CartesianGrid strokeDasharray="3 3" />
-							<XAxis dataKey="date" />
+							<XAxis 
+								dataKey="date" 
+								type="number"
+								domain={['dataMin', 'dataMax']}
+								scale="time"
+								tickFormatter={(timestamp) => new Date(timestamp).toLocaleDateString()}
+							/>
 							<YAxis />
 							<ChartTooltip content={<ChartTooltipContent />} />
 							<Line type="monotone" dataKey="weight" stroke="var(--color-weight)" name="Weight" />
