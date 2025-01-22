@@ -14,7 +14,7 @@ type TimeRange = 'all' | '12m' | '3m'
 
 export default function WeightChart({ data }: WeightChartProps) {
 
-    const [timeRange, setTimeRange] = useState<TimeRange>('all')
+    const [timeRange, setTimeRange] = useState<TimeRange>('3m')
 
 	const filteredData = data.filter(entry => {
 		const entryDate = new Date(entry.date)
