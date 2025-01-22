@@ -1,20 +1,17 @@
 import React, { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { convertToKg } from "../utils/unitConversions"
 
 type WeightInputProps = {
     onAddWeight: (weight: number) => void
-    unit: "kg" | "lbs" | "stone"
 }
 
-export default function WeightInput({ onAddWeight, unit }: WeightInputProps) {
+export default function WeightInput({ onAddWeight}: WeightInputProps) {
     const [weight, setWeight] = useState("")
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        const weightInKg = convertToKg(Number.parseFloat(weight), unit)
-        onAddWeight(weightInKg)
+        onAddWeight(Number.parseFloat(weight))
         setWeight("")
     }
 

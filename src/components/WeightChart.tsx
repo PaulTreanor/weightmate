@@ -7,13 +7,12 @@ import { convertFromKg } from "../utils/unitConversions"
 
 type WeightChartProps = {
 	data: WeightEntry[]
-	unit: "kg" | "lbs" | "stone"
 }
 
-export default function WeightChart({ data, unit }: WeightChartProps) {
+export default function WeightChart({ data }: WeightChartProps) {
 	const chartData = data.map((entry) => ({
 		date: new Date(entry.date).toLocaleDateString(),
-		weight: Number(convertFromKg(entry.weight, unit).toFixed(1)),
+		weight: entry.weight
 	}))
 
 	return (
@@ -25,7 +24,7 @@ export default function WeightChart({ data, unit }: WeightChartProps) {
 				<ChartContainer
 					config={{
 						weight: {
-							label: `Weight (${unit})`,
+							label: `Weight (kg)`,
 							color: "hsl(var(--chart-1))",
 						},
 					}}

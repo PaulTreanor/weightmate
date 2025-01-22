@@ -8,7 +8,6 @@ import type { WeightEntry } from "@/types"
 import mockData from "../data/mockData"
 
 const IndexPage: React.FC<PageProps> = () => {
-	const [unit, setUnit] = useState<"kg" | "lbs" | "stone">("kg")
 	const [weightData, setWeightData] = useState<WeightEntry[]>(mockData)
 
 	const addWeight = (weight: number) => {
@@ -20,10 +19,10 @@ const IndexPage: React.FC<PageProps> = () => {
 	  }
 	return (
 		<div className="min-h-screen bg-gray-100">
-		<Header unit={unit} setUnit={setUnit} />
+		<Header/>
 			<main className="container mx-auto px-4 py-8">
-				<WeightInput onAddWeight={addWeight} unit={unit} />
-				<WeightChart data={weightData} unit={unit} />
+				<WeightInput onAddWeight={addWeight}/>
+				<WeightChart data={weightData}/>
 				<DataHistoryViewer data={weightData} />
 			</main>
 	  </div>
