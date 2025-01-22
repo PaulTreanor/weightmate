@@ -3,7 +3,7 @@ import type { HeadFC, PageProps } from "gatsby"
 import Header from "@/components/Header"
 import WeightInput from "@/components/WeightInput"
 import WeightChart from "@/components/WeightChart"
-import JsonViewer from "@/components/JsonViewer"
+import DataHistoryViewer from "@/components/DataHistoryViewer"
 import type { WeightEntry } from "@/types"
 import mockData from "../data/mockData"
 
@@ -24,7 +24,7 @@ const IndexPage: React.FC<PageProps> = () => {
 			<main className="container mx-auto px-4 py-8">
 				<WeightInput onAddWeight={addWeight} unit={unit} />
 				<WeightChart data={weightData} unit={unit} />
-				<JsonViewer data={weightData} />
+				<DataHistoryViewer data={weightData} />
 			</main>
 	  </div>
 	)

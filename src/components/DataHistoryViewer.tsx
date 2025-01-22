@@ -2,11 +2,11 @@ import React, { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
-type JsonViewerProps = {
+type DataHistoryViewerProps = {
 	data: any
 }
 
-export default function JsonViewer({ data }: JsonViewerProps) {
+export default function DataHistoryViewer({ data }: DataHistoryViewerProps) {
     const [isOpen, setIsOpen] = useState(false)
     
     const formatDate = (dateString: string) => {
@@ -18,7 +18,7 @@ export default function JsonViewer({ data }: JsonViewerProps) {
 		<Card>
 			<CardHeader>
 				<CardTitle className="flex justify-between items-center">
-					JSON Data
+					Data History
 					<Button onClick={() => setIsOpen(!isOpen)}>{isOpen ? "Hide" : "Show"}</Button>
 				</CardTitle>
 			</CardHeader>
