@@ -1,9 +1,16 @@
 import React, { useState } from 'react'
-import { Line, LineChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
+import { Line, LineChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import type { WeightEntry } from "../types"
-import { convertFromKg } from "../utils/unitConversions"
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select"
+import { CardDescription } from "@/components/ui/card"
 
 type WeightChartProps = {
 	data: WeightEntry[]
@@ -11,9 +18,7 @@ type WeightChartProps = {
 
 type TimeRange = 'all' | '12m' | '3m'
 
-
 export default function WeightChart({ data }: WeightChartProps) {
-
     const [timeRange, setTimeRange] = useState<TimeRange>('3m')
 
 	const filteredData = data.filter(entry => {
@@ -37,7 +42,7 @@ export default function WeightChart({ data }: WeightChartProps) {
         }))
 
 	return (
-		<Card className="w-full mb-8">
+		<Card className="w-full max-w-[900px] mx-auto mb-8">
 			<CardHeader>
             <div className="flex items-center justify-between">
 					<CardTitle>Weight Trend</CardTitle>
@@ -83,7 +88,7 @@ export default function WeightChart({ data }: WeightChartProps) {
 							color: "hsl(var(--chart-1))",
 						},
 					}}
-					className="h-[300px]"
+					className="h-[200px] sm:h-[300px] md:h-[400px]"
 				>
 					<ResponsiveContainer width="100%" height="100%">
 						<LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
