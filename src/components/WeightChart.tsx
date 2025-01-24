@@ -3,14 +3,6 @@ import { Line, LineChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer } fro
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import type { WeightEntry } from "../types"
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select"
-import { CardDescription } from "@/components/ui/card"
 
 type WeightChartProps = {
 	data: WeightEntry[]
