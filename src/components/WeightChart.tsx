@@ -101,7 +101,10 @@ export default function WeightChart({ data }: WeightChartProps) {
 								tickFormatter={(timestamp) => new Date(timestamp).toLocaleDateString()}
 							/>
 							<YAxis
-								domain={[(dataMin: number) => dataMin - 10, (dataMax: number) => dataMax + 10]}
+								domain={[
+									(dataMin: number) => dataMin - 10,
+									(dataMax: number) => dataMax + 10,
+								]}
 							/>
 							<ChartTooltip content={<ChartTooltipContent />} />
 							<Line type="monotone" dataKey="weight" stroke="var(--color-weight)" name="Weight" />
