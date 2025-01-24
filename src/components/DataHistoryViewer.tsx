@@ -15,7 +15,7 @@ export default function DataHistoryViewer({ data }: DataHistoryViewerProps) {
 	}
 
 	return (
-		<Card>
+		<Card className="w-full max-w-[900px] mx-auto mb-8">
 			<CardHeader>
 				<CardTitle className="flex justify-between items-center">
 					Data History
