@@ -39,7 +39,6 @@ sam deploy --guided # if deploying for first time
 # 5. Save args to samconfig.toml
 ```
 
-
 You can find your API Gateway Endpoint URL in the output values displayed after deployment.
 
 ## Unit tests
