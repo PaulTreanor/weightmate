@@ -24,13 +24,28 @@ export default function DataHistoryViewer({ data }: DataHistoryViewerProps) {
 			</CardHeader>
 			{isOpen && (
 				<CardContent>
-					<ul className="bg-gray-100 p-4 rounded-md overflow-auto max-h-96">
-						{data.map((entry: { date: string; weight: number }, index: number) => (
-							<li key={index} className="mb-2">
-								{formatDate(entry.date)}: {entry.weight} kg
-							</li>
-						))}
-					</ul>
+					<div className="overflow-y-auto max-h-[calc(100vh-10rem)]">
+						<table className="min-w-full divide-y divide-gray-200">
+						<thead className="bg-gray-50 sticky top-0">
+							<tr>
+							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+								Weight (kg)
+							</th>
+							</tr>
+						</thead>
+						<tbody className="bg-white divide-y divide-gray-200">
+						{[...data].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map((entry: { date: string; weight: number }, index: number) => (
+							<tr key={entry.date} className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}>
+								<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+								{formatDate(entry.date)}
+								</td>
+								<td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{entry.weight}</td>
+							</tr>
+							))}
+						</tbody>
+						</table>
+					</div>
 				</CardContent>
 			)}
 		</Card>
