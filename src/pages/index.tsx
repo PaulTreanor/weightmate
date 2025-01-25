@@ -19,13 +19,26 @@ const IndexPage: React.FC<PageProps> = () => {
 		}
 		setWeightData([...weightData, newEntry])
 	  }
+
+	const handleAuth = () => {
+		setIsAuthenticated(true)
+	}
+
+	const handleLogout = () => {
+		setIsAuthenticated(false)
+	}
+
 	return (
 		<div className="min-h-screen bg-gray-100">
-		<Header/>
+		<Header handleLogout={handleLogout}/>
 			<main className="container mx-auto px-4 py-8">
 				
 					<>	
-					{!isAuthenticated && <AuthModal />}
+					{!isAuthenticated &&
+						<AuthModal
+							handleAuth={handleAuth}
+						/>
+					}
 					<WeightInput onAddWeight={addWeight}/>
 					<WeightChart data={weightData}/>
 					<DataHistoryViewer data={weightData} />

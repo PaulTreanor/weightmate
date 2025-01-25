@@ -13,24 +13,23 @@ import {
 } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-export function AuthModal() {
-  const [isOpen, setIsOpen] = useState(false)
+export function AuthModal({ handleAuth }: { handleAuth: () => void }) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     // Handle form submission (login or signup)
     console.log("Form submitted")
-    setIsOpen(false)
+    handleAuth()
   }
 
   const handleGoogleSignIn = () => {
     // Handle Google sign-in
     console.log("Google sign-in clicked")
-    setIsOpen(false)
+    handleAuth()
   }
 
   return (
-    <Dialog open={true} onOpenChange={setIsOpen}>
+    <Dialog open={true}>
       {/* <DialogTrigger asChild>
         <Button variant="outline">Login / Sign Up</Button>
       </DialogTrigger> */}
