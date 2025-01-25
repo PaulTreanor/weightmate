@@ -30,7 +30,7 @@ const IndexPage: React.FC<PageProps> = () => {
 
 	return (
 		<div className="min-h-screen bg-gray-100">
-		<Header handleLogout={handleLogout}/>
+		<Header isLoggedIn={isAuthenticated} handleLogout={handleLogout}/>
 			<main className="container mx-auto px-4 py-8">
 				
 					<>	
