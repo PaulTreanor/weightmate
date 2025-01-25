@@ -15,24 +15,38 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export function AuthModal({ handleAuth }: { handleAuth: () => void }) {
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Handle form submission (login or signup)
-    console.log("Form submitted")
-    handleAuth()
-  }
+  const [loginData, setLoginData] = useState({
+		email: '',
+		password: ''
+	});
+	
+	const [signupData, setSignupData] = useState({
+		email: '',
+		password: '',
+		confirmPassword: ''
+	});
 
-  const handleGoogleSignIn = () => {
-    // Handle Google sign-in
-    console.log("Google sign-in clicked")
-    handleAuth()
-  }
+	const handleLogin = (e: React.FormEvent) => {
+		e.preventDefault();
+		console.log('Login attempt with:', loginData);
+		// Add your login logic here
+		handleAuth();
+	}
+
+	const handleSignup = (e: React.FormEvent) => {
+		e.preventDefault();
+		if (signupData.password !== signupData.confirmPassword) {
+			alert('Passwords do not match');
+			return;
+		}
+		console.log('Signup attempt with:', signupData);
+		// Add your signup logic here
+		handleAuth();
+	}
+
 
   return (
     <Dialog open={true}>
-      {/* <DialogTrigger asChild>
-        <Button variant="outline">Login / Sign Up</Button>
-      </DialogTrigger> */}
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Login or Sign Up</DialogTitle>
@@ -44,19 +58,39 @@ export function AuthModal({ handleAuth }: { handleAuth: () => void }) {
             <TabsTrigger value="signup">Sign Up</TabsTrigger>
           </TabsList>
           <TabsContent value="login">
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleLogin}>
               <div className="grid gap-4 py-4">
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="email" className="text-right">
                     Email
                   </Label>
-                  <Input id="email" type="email" className="col-span-3" required />
+                  <Input 
+                    id="email" 
+                    type="email" 
+                    className="col-span-3" 
+                    required
+                    value={loginData.email}
+                    onChange={(e) => setLoginData({
+                      ...loginData,
+                      email: e.target.value
+                    })}
+                  />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="password" className="text-right">
                     Password
                   </Label>
-                  <Input id="password" type="password" className="col-span-3" required />
+                  <Input 
+                    id="password" 
+                    type="password" 
+                    className="col-span-3" 
+                    required
+                    value={loginData.password}
+                    onChange={(e) => setLoginData({
+                      ...loginData,
+                      password: e.target.value
+                    })}
+                  />
                 </div>
               </div>
               <DialogFooter>
@@ -65,34 +99,64 @@ export function AuthModal({ handleAuth }: { handleAuth: () => void }) {
             </form>
           </TabsContent>
           <TabsContent value="signup">
-            <form onSubmit={handleSubmit}>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="signup-email" className="text-right">
-                    Email
-                  </Label>
-                  <Input id="signup-email" type="email" className="col-span-3" required />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="signup-password" className="text-right">
-                    Password
-                  </Label>
-                  <Input id="signup-password" type="password" className="col-span-3" required />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="confirm-password" className="text-right">
-                    Confirm
-                  </Label>
-                  <Input id="confirm-password" type="password" className="col-span-3" required />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button type="submit">Sign Up</Button>
-              </DialogFooter>
-            </form>
+					<form onSubmit={handleSignup}>
+						<div className="grid gap-4 py-4">
+							<div className="grid grid-cols-4 items-center gap-4">
+								<Label htmlFor="signup-email" className="text-right">
+									Email
+								</Label>
+								<Input 
+									id="signup-email" 
+									type="email" 
+									className="col-span-3" 
+									required
+									value={signupData.email}
+									onChange={(e) => setSignupData({
+										...signupData,
+										email: e.target.value
+									})}
+								/>
+							</div>
+							<div className="grid grid-cols-4 items-center gap-4">
+								<Label htmlFor="signup-password" className="text-right">
+									Password
+								</Label>
+								<Input 
+									id="signup-password" 
+									type="password" 
+									className="col-span-3" 
+									required
+									value={signupData.password}
+									onChange={(e) => setSignupData({
+										...signupData,
+										password: e.target.value
+									})}
+								/>
+							</div>
+							<div className="grid grid-cols-4 items-center gap-4">
+								<Label htmlFor="confirm-password" className="text-right">
+									Confirm
+								</Label>
+								<Input 
+									id="confirm-password" 
+									type="password" 
+									className="col-span-3" 
+									required
+									value={signupData.confirmPassword}
+									onChange={(e) => setSignupData({
+										...signupData,
+										confirmPassword: e.target.value
+									})}
+								/>
+							</div>
+						</div>
+						<DialogFooter>
+							<Button type="submit">Sign Up</Button>
+						</DialogFooter>
+					</form>
           </TabsContent>
         </Tabs>
-        <div className="relative">
+        {/* <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t" />
           </div>
@@ -102,7 +166,7 @@ export function AuthModal({ handleAuth }: { handleAuth: () => void }) {
         </div>
         <Button variant="outline" onClick={handleGoogleSignIn} className="w-full">
           Sign in with Google
-        </Button>
+        </Button> */}
       </DialogContent>
     </Dialog>
   )
