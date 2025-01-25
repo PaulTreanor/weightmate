@@ -1,10 +1,4 @@
-# weighttrack.app
+WeightTrack.app
 
-Built with Gatsby, Tailwind, Shadcn, and TypeScript.
-
-## Running this 
-
-```bash
-npm i
-npm run dev
-```
+Very minimalistic weight tracking app. Got mad at trying to make this Google Sheets
+cd 
