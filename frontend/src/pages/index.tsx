@@ -19,12 +19,8 @@ const IndexPage: React.FC<PageProps> = () => {
 		setWeightData(data.weightData)
 	}
 
-	const addWeight = async (weight: number) => {
-		const newEntry: WeightEntry = {
-			date: new Date().toISOString(),
-			weight: weight,
-		}
-		setWeightData([...weightData, newEntry])
+	// For posting single WeightEntry update
+	const postWeightData = async (newEntry: WeightEntry) => {
 		const response = await fetch(`${ROOT_URL}${WEIGHT_END_POINT}`, {
 			method: 'POST',
 			headers: {
@@ -32,6 +28,17 @@ const IndexPage: React.FC<PageProps> = () => {
 			},
 			body: JSON.stringify([newEntry]),
 		})
+
+		return response;
+	}
+
+	const addWeight = async (weight: number) => {
+		const newEntry: WeightEntry = {
+			date: new Date().toISOString(),
+			weight: weight,
+		}
+		setWeightData([...weightData, newEntry])
+		const response = await postWeightData(newEntry)
 		const data = await response.json()
 		console.log(data)
 	  }
@@ -90,4 +97,4 @@ const IndexPage: React.FC<PageProps> = () => {
 
 export default IndexPage
 
-export const Head: HeadFC = () => <title>Home Page</title>
+export const Head: HeadFC = () => <title>weightmate</title>
