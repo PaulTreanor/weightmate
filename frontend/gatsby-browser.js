@@ -4,9 +4,9 @@ import { Amplify } from 'aws-amplify';
 Amplify.configure({
 	Auth: {
 		Cognito: {
-			userPoolId: 'eu-west-1_JpqZxFDhE',
-			userPoolClientId: '3a5k2g7dvvu59l85ds52ed524j',
-			region: 'eu-west-1',
+			userPoolId: process.env.GATSBY_COGNITO_USER_POOL_ID,
+			userPoolClientId: process.env.GATSBY_COGNITO_CLIENT_ID,
+			region: process.env.AWS_REGION,
 			loginWith: {
 				username: false,
 				email: true,
@@ -14,4 +14,3 @@ Amplify.configure({
 		}
 	}
 });
-
