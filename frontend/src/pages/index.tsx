@@ -19,12 +19,21 @@ const IndexPage: React.FC<PageProps> = () => {
 		setWeightData(data.weightData)
 	}
 
-	const addWeight = (weight: number) => {
+	const addWeight = async (weight: number) => {
 		const newEntry: WeightEntry = {
 			date: new Date().toISOString(),
 			weight: weight,
 		}
 		setWeightData([...weightData, newEntry])
+		const response = await fetch(`${ROOT_URL}${WEIGHT_END_POINT}`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify([newEntry]),
+		})
+		const data = await response.json()
+		console.log(data)
 	  }
 
 	const handleAuth = () => {
