@@ -6,12 +6,18 @@ import WeightInput from "@/components/WeightInput"
 import WeightChart from "@/components/WeightChart"
 import DataHistoryViewer from "@/components/DataHistoryViewer"
 import type { WeightEntry } from "@/types"
-import mockData from "../data/mockData"
 import { AuthModal } from "@/components/AuthModal"
+import { ROOT_URL, WEIGHT_END_POINT } from "../utils/endpoint"
 
 const IndexPage: React.FC<PageProps> = () => {
-	const [weightData, setWeightData] = useState<WeightEntry[]>(mockData)
+	const [weightData, setWeightData] = useState<WeightEntry[]>([])
 	const [isAuthenticated, setIsAuthenticated] = useState(false)
+
+	const fetchWeightData = async () => {
+		const response = await fetch(`${ROOT_URL}${WEIGHT_END_POINT}`)
+		const data = await response.json()
+		setWeightData(data.weightData)
+	}
 
 	const addWeight = (weight: number) => {
 		const newEntry: WeightEntry = {
@@ -36,6 +42,10 @@ const IndexPage: React.FC<PageProps> = () => {
 
 	useEffect(() => {
 		checkAuthStatus()
+	}, [])
+
+	useEffect(() => {
+		fetchWeightData()
 	}, [])
 
 	const checkAuthStatus = async () => {
