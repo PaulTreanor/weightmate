@@ -1,4 +1,5 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
+import { getCurrentUser, signOut } from 'aws-amplify/auth'
 import type { HeadFC, PageProps } from "gatsby"
 import Header from "@/components/Header"
 import WeightInput from "@/components/WeightInput"
@@ -24,9 +25,28 @@ const IndexPage: React.FC<PageProps> = () => {
 		setIsAuthenticated(true)
 	}
 
-	const handleLogout = () => {
-		setIsAuthenticated(false)
+	const handleLogout = async () => {
+		try {
+			await signOut()
+			setIsAuthenticated(false)
+		} catch (error) {
+			console.error('Error signing out:', error)
+		}
 	}
+
+	useEffect(() => {
+		checkAuthStatus()
+	}, [])
+
+	const checkAuthStatus = async () => {
+		try {
+			const user = await getCurrentUser()
+			setIsAuthenticated(true)
+		} catch (error) {
+			setIsAuthenticated(false)
+		}
+	}
+
 
 	return (
 		<div className="min-h-screen bg-gray-100">
