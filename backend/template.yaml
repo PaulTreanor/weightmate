@@ -3,15 +3,14 @@ Transform: AWS::Serverless-2016-10-31
 Description: >
   weightmate
 
-  Sample SAM Template for weightmate
+  SAM Template for weightmate
 
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
     Timeout: 3
 Resources:
   WeightLambdaFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function 
     Properties:
       CodeUri: weight-lambda/
       Handler: app.lambdaHandler
@@ -19,11 +18,30 @@ Resources:
       Architectures:
       - x86_64
       Events:
-        Weight:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+      Events:
+        WeightGet:
+          Type: Api
           Properties:
             Path: /weight
             Method: get
+            Cors:
+              AllowMethods: "'*'"
+              AllowHeaders: "'*'"
+              AllowOrigin: "'*'"
+        WeightPost:
+          Type: Api
+          Properties:
+            Path: /weight
+            Method: post
+            Cors:
+              AllowMethods: "'*'"
+              AllowHeaders: "'*'"
+              AllowOrigin: "'*'"
+        WeightOptions: # Options must be handled for CORS
+          Type: Api
+          Properties:
+            Path: /weight
+            Method: options
             Cors:
               AllowMethods: "'*'"
               AllowHeaders: "'*'"

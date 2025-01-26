@@ -3,6 +3,44 @@ The backend is deployed to AWS with AWS SAM.
 
 You will need [the SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html), [Node.js 22](https://nodejs.org/en/), and [Docker](https://hub.docker.com/search/?type=edition&offering=community) to run and depoy the backend. 
 
+## Endpoints 
+
+- **GET /weight**
+	```bash
+	# Request
+	curl http://127.0.0.1:3000/weight
+
+	# Response
+	{
+		"weightData": [
+			{"date": "2023-01-15", "weight": 90.2},
+			{"date": "2023-02-01", "weight": 90.5}
+			# ... more entries
+		]
+	}
+	```
+
+- **POST /weight**
+	```bash
+	# Request
+	curl -X POST http://127.0.0.1:3000/weight \
+		-H "Content-Type: application/json" \
+		-d '[
+			{"date": "2025-01-23", "weight": 97.2},
+			{"date": "2025-01-24", "weight": 97.0}
+		]'
+
+	# Response
+	{
+		"message": "Weight entries added successfully",
+		"entries": [
+			{"date": "2025-01-23", "weight": 97.2},
+			{"date": "2025-01-24", "weight": 97.0}
+		]
+	}
+	```
+
+
 ## Running the backend locally
 ```bash
 sam build
