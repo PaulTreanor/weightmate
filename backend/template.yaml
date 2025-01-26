@@ -24,6 +24,10 @@ Resources:
           Properties:
             Path: /weight
             Method: get
+            Cors:
+              AllowMethods: "'*'"
+              AllowHeaders: "'*'"
+              AllowOrigin: "'*'"
     Metadata: # Manage esbuild properties
       BuildMethod: esbuild  
       BuildProperties:
