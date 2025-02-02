@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { getCurrentUser, signOut } from 'aws-amplify/auth'
+import { getCurrentUser, signOut, fetchAuthSession } from 'aws-amplify/auth'
 import type { HeadFC, PageProps } from "gatsby"
 import Header from "@/components/Header"
 import WeightInput from "@/components/WeightInput"
@@ -13,23 +13,54 @@ const IndexPage: React.FC<PageProps> = () => {
 	const [weightData, setWeightData] = useState<WeightEntry[]>([])
 	const [isAuthenticated, setIsAuthenticated] = useState(false)
 
+	const getAuthToken = async () => {
+		try {
+			const session = await fetchAuthSession()
+			return session.tokens?.idToken?.toString()
+		} catch (error) {
+			console.error('Error getting auth token:', error)
+			return null
+		}
+	}
+
 	const fetchWeightData = async () => {
-		const response = await fetch(`${ROOT_URL}${WEIGHT_END_POINT}`)
-		const data = await response.json()
-		setWeightData(data.weightData)
+		try {
+			const token = await getAuthToken()
+			if (!token) {
+				console.error('No auth token available')
+				return
+			}
+
+			const response = await fetch(`${ROOT_URL}${WEIGHT_END_POINT}`, {
+				headers: {
+					'Authorization': `Bearer ${token}`
+				}
+			})
+			const data = await response.json()
+			console.log(data)
+			setWeightData(data.weightData)
+		} catch (error) {
+			console.error('Error fetching weight data:', error)
+		}
 	}
 
 	// For posting single WeightEntry update
 	const postWeightData = async (newEntry: WeightEntry) => {
+		const token = await getAuthToken()
+		if (!token) {
+			throw new Error('No auth token available')
+		}
+
 		const response = await fetch(`${ROOT_URL}${WEIGHT_END_POINT}`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`
 			},
 			body: JSON.stringify([newEntry]),
 		})
 
-		return response;
+		return response
 	}
 
 	const addWeight = async (weight: number) => {
@@ -61,8 +92,10 @@ const IndexPage: React.FC<PageProps> = () => {
 	}, [])
 
 	useEffect(() => {
-		fetchWeightData()
-	}, [])
+		if (isAuthenticated) {
+			fetchWeightData()
+		}
+	}, [isAuthenticated])
 
 	const checkAuthStatus = async () => {
 		try {
@@ -78,8 +111,7 @@ const IndexPage: React.FC<PageProps> = () => {
 		<div className="min-h-screen bg-gray-100">
 		<Header isLoggedIn={isAuthenticated} handleLogout={handleLogout}/>
 			<main className="container mx-auto px-4 py-8">
-				
-					<>	
+				<>	
 					{!isAuthenticated &&
 						<AuthModal
 							handleAuth={handleAuth}
@@ -88,8 +120,7 @@ const IndexPage: React.FC<PageProps> = () => {
 					<WeightInput onAddWeight={addWeight}/>
 					<WeightChart data={weightData}/>
 					<DataHistoryViewer data={weightData} />
-					</>
-
+				</>
 			</main>
 	  </div>
 	)
