@@ -1,0 +1,32 @@
+{
+  "name": "cdk-backend",
+  "version": "0.1.0",
+  "bin": {
+    "cdk-backend": "bin/cdk-backend.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:lambda": "tsc lambda/hello.ts --outDir dist/lambda --esModuleInterop true",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk",
+    "synth": "cdk synth --no-staging > template.yaml",
+    "dev": "nodemon --watch lambda -e ts --exec 'npm run build && npm run synth && sam local start-api'"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/node": "22.7.9",
+    "aws-cdk": "2.178.1",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.9",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.6.3"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-apigateway": "^1.204.0",
+    "@aws-cdk/aws-lambda": "^1.204.0",
+    "aws-cdk-lib": "2.178.1",
+    "constructs": "^10.0.0"
+  }
+}
