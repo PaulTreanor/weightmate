@@ -1,0 +1,16 @@
+{
+  "name": "@weightmate-backend/scripts",
+  "version": "0.0.0",
+  "type": "module",
+  "dependencies": {
+    "@weightmate-backend/core": "*",
+    "sst": "*"
+  },
+  "scripts": {
+    "shell": "sst shell tsx"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "tsx": "^4"
+  }
+}

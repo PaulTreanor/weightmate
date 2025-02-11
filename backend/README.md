@@ -1,94 +1,81 @@
-# weightmate
-The backend is deployed to AWS with AWS SAM. 
+# Monorepo Template
 
-You will need [the SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html), [Node.js 22](https://nodejs.org/en/), and [Docker](https://hub.docker.com/search/?type=edition&offering=community) to run and depoy the backend. 
+A template to create a monorepo SST v3 project. [Learn more](https://sst.dev/docs/set-up-a-monorepo).
 
-## Endpoints 
+## Get started
 
-- **GET /weight**
-	```bash
-	# Request
-	curl http://127.0.0.1:3000/weight
+1. Use this template to [create your own repo](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
 
-	# Response
-	{
-		"weightData": [
-			{"date": "2023-01-15", "weight": 90.2},
-			{"date": "2023-02-01", "weight": 90.5}
-			# ... more entries
-		]
-	}
-	```
+2. Clone the new repo.
 
-- **POST /weight**
-	```bash
-	# Request
-	curl -X POST http://127.0.0.1:3000/weight \
-		-H "Content-Type: application/json" \
-		-d '[
-			{"date": "2025-01-23", "weight": 97.2},
-			{"date": "2025-01-24", "weight": 97.0}
-		]'
+   ```bash
+   git clone <REPO_URL> MY_APP
+   cd MY_APP
+   ```
 
-	# Response
-	{
-		"message": "Weight entries added successfully",
-		"entries": [
-			{"date": "2025-01-23", "weight": 97.2},
-			{"date": "2025-01-24", "weight": 97.0}
-		]
-	}
-	```
+3. Rename the files in the project to the name of your app.
 
+   ```bash
+   npx replace-in-file '/weightmate-backend/g' 'MY_APP' '**/*.*' --verbose
+   ```
 
-## Running the backend locally
-```bash
-sam build
+4. Deploy!
 
-# Invoke single function locally
-# You can also pass it an event with `--event yourEvent.json` flag
-sam local invoke WeightsLambdaFunction
+   ```bash
+   npm install
+   npx sst deploy
+   ```
 
-# Run API locally 
-# Will output localhost port address
-sam local start-api
+5. Optionally, enable [_git push to deploy_](https://sst.dev/docs/console/#autodeploy).
 
-# Rebuild then run API locally
-sh start-local
+## Usage
 
-```
+This template uses [npm Workspaces](https://docs.npmjs.com/cli/v8/using-npm/workspaces). It has 3 packages to start with and you can add more it.
 
+1. `core/`
 
-## Deploying the backend to AWS 
-```bash
-# Set your AWS credentials
-export AWS_PROFILE ${your-profile-name}`)
+   This is for any shared code. It's defined as modules. For example, there's the `Example` module.
 
-# Build application
-sam build
+   ```ts
+   export module Example {
+     export function hello() {
+       return "Hello, world!";
+     }
+   }
+   ```
 
-# Deploy application
-sam deploy --guided # if deploying for first time
-# ..deploy options
-# 1. Stack Name - CloudFormation stack name - must be unique to account + region
-# 2. AWS Region
-# 3. Confirm changes before deploy - generally a good idea
-# 4. Allow SAM CLI IAM role creation - so SAM can infer required permissions from template + code  
-# 5. Save args to samconfig.toml
-```
+   That you can use across other packages using.
 
-You can find your API Gateway Endpoint URL in the output values displayed after deployment.
+   ```ts
+   import { Example } from "@aws-monorepo/core/example";
 
-## Unit tests
-```bash
-cd weight-lambda
-npm run test
-```
+   Example.hello();
+   ```
 
-## Cleanup
-To delete the CloudFormation stack and all its resources:
+   We also have [Vitest](https://vitest.dev/) configured for testing this package with the `sst shell` CLI.
 
-```bash
-sam delete --stack-name weightmate
-```
+   ```bash
+   npm test
+   ```
 
+2. `functions/`
+
+   This is for your Lambda functions and it uses the `core` package as a local dependency.
+
+3. `scripts/`
+
+    This is for any scripts that you can run on your SST app using the `sst shell` CLI and [`tsx`](https://www.npmjs.com/package/tsx). For example, you can run the example script using:
+
+   ```bash
+   npm run shell src/example.ts
+   ```
+
+### Infrastructure
+
+The `infra/` directory allows you to logically split the infrastructure of your app into separate files. This can be helpful as your app grows.
+
+In the template, we have an `api.ts`, and `storage.ts`. These export the created resources. And are imported in the `sst.config.ts`.
+
+---
+
+**Join our community** [Discord](https://sst.dev/discord) | [YouTube](https://www.youtube.com/c/sst-dev) | [X.com](https://x.com/SST_dev)
