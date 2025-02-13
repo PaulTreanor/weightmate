@@ -44,21 +44,97 @@ const headers = {
     'Access-Control-Allow-Methods': '*',
 };
 
-// const getWeights = async (): Promise<APIGatewayProxyResult> => {
-//     return {
-//         statusCode: 200,
-//         headers,
-//         body: JSON.stringify({ weightData }),
-//     };
-// };
-
-const handler = async (): Promise<APIGatewayProxyResult> => {
-	console.log(`Event recieved`)
+const getWeights = async (): Promise<APIGatewayProxyResult> => {
     return {
         statusCode: 200,
         headers,
         body: JSON.stringify({ weightData }),
     };
+};
+
+const addWeights = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+    if (!event.body) {
+        return {
+            statusCode: 400,
+            headers,
+            body: JSON.stringify({
+                message: 'Missing request body',
+            }),
+        };
+    }
+
+    const newEntries: WeightEntry[] = JSON.parse(event.body);
+
+    // Validate the input
+    if (!Array.isArray(newEntries)) {
+        return {
+            statusCode: 400,
+            headers,
+            body: JSON.stringify({
+                message: 'Invalid input: Expected an array of weight entries',
+            }),
+        };
+    }
+
+    // Validate each entry
+    for (const entry of newEntries) {
+        if (!entry.date || !entry.weight || typeof entry.weight !== 'number') {
+            return {
+                statusCode: 400,
+                headers,
+                body: JSON.stringify({
+                    message: 'Invalid entry: Each entry must have a date and weight',
+                }),
+            };
+        }
+    }
+
+    // In a real application, you would save these to a database
+    weightData.push(...newEntries);
+
+    return {
+        statusCode: 201,
+        headers,
+        body: JSON.stringify({
+            message: 'Weight entries added successfully',
+            entries: newEntries,
+        }),
+    };
+};
+
+
+const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+    try {
+        switch (event.httpMethod) {
+            case 'GET':
+                return await getWeights();
+            case 'POST':
+                return await addWeights(event);
+            case 'OPTIONS':
+                return {
+                    statusCode: 200,
+                    headers,
+                    body: '',
+                };
+            default:
+                return {
+                    statusCode: 405,
+                    headers,
+                    body: JSON.stringify({
+                        message: 'Method not allowed',
+                    }),
+                };
+        }
+    } catch (err) {
+        console.log(err);
+        return {
+            statusCode: 500,
+            headers,
+            body: JSON.stringify({
+                message: 'Some error happened',
+            }),
+        };
+    }
 };
 
 export { handler }

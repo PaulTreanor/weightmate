@@ -24,5 +24,7 @@ export class CdkBackendStack extends cdk.Stack {
 		// This makes the API route /weight
 		const weightEndpoint = api.root.addResource('weight');
 		weightEndpoint.addMethod('GET', weightApiIntegration);
+		weightEndpoint.addMethod('POST', weightApiIntegration); 
+
 	}
 }

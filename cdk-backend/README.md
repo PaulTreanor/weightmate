@@ -17,6 +17,16 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 ## Endpoints
 - Root 
     - Local - http://localhost:3000/
-    - Prod - https://42aeyqb3ci.execute-api.eu-west-1.amazonaws.com/prod/hello
+    - Prod - https://42aeyqb3ci.execute-api.eu-west-1.amazonaws.com/prod/weight
 - /weight
-    - Returns mock json data for weights
+    - GET - Returns mock json data for weights
+    - POST - Adds weight data for user
+
+## Testing API 
+```bash
+# Add new weight entry
+curl -X POST \
+  http://localhost:3000/weight \
+  -H 'Content-Type: application/json' \
+  -d '[{"weight": 75.5, "date": "2024-03-19"}]'
+```
