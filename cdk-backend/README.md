@@ -18,5 +18,5 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 - Root 
     - Local - http://localhost:3000/
     - Prod - https://42aeyqb3ci.execute-api.eu-west-1.amazonaws.com/prod/hello
-- /hello
+- /weight
     - Returns mock json data for weights

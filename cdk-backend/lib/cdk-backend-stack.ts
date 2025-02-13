@@ -7,22 +7,22 @@ export class CdkBackendStack extends cdk.Stack {
 		super(scope, id, props);
 
 		// Create Lambda function
-		const helloLambda = new lambda.Function(this, 'HelloHandler', {
+		const weightApiLambda = new lambda.Function(this, 'WeightAPIHandler', {
 			runtime: lambda.Runtime.NODEJS_18_X,
 			code: lambda.Code.fromAsset('lambda'),
-			handler: 'hello.handler',
+			handler: 'weightApi.handler',
 		});
 
 		// Create API Gateway
-		const api = new apigateway.RestApi(this, 'HelloApi', {
-			restApiName: 'Hello API',
-			description: 'Simple hello world API'
+		const api = new apigateway.RestApi(this, 'WeightApi', {
+			restApiName: 'Weight API',
+			description: 'For reading and updating user weight data'
 		});
 
 		// Create API Gateway resource and method
-		const helloIntegration = new apigateway.LambdaIntegration(helloLambda);
-		// This makes the API route /hello
-		const hello = api.root.addResource('hello');
-		hello.addMethod('GET', helloIntegration);
+		const weightApiIntegration = new apigateway.LambdaIntegration(weightApiLambda);
+		// This makes the API route /weight
+		const weightEndpoint = api.root.addResource('weight');
+		weightEndpoint.addMethod('GET', weightApiIntegration);
 	}
 }
