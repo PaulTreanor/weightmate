@@ -21,6 +21,8 @@ export class CdkBackendStack extends cdk.Stack {
 
 		// Create API Gateway resource and method
 		const helloIntegration = new apigateway.LambdaIntegration(helloLambda);
-		api.root.addMethod('GET', helloIntegration);
+		// This makes the API route /hello
+		const hello = api.root.addResource('hello');
+		hello.addMethod('GET', helloIntegration);
 	}
 }

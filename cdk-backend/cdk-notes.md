@@ -22,3 +22,16 @@ Install some more dependencies
 ```bash
 npm install @aws-cdk/aws-lambda @aws-cdk/aws-apigateway
 ```
+
+
+## Deploying 
+```bash
+# check changes
+cdk diff
+
+## bootstrap cdk (for first time using cdk in AWS account)
+cdk bootstrap
+
+## deploying
+cdk deploy
+```
