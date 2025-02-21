@@ -2,17 +2,29 @@ import * as cdk from 'aws-cdk-lib';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
+import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 
 
 export class CdkBackendStack extends cdk.Stack {
 	constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
 		super(scope, id, props);
 
+		// Create DynamoDB table
+		const weightTable = new dynamodb.Table(this, 'WeightTable', {
+			partitionKey: { name: 'userEmail', type: dynamodb.AttributeType.STRING },
+			sortKey: { name: 'date', type: dynamodb.AttributeType.STRING },
+			billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+			removalPolicy: cdk.RemovalPolicy.DESTROY, // For development only
+		});
+
 		// Create Lambda function
 		const weightApiLambda = new lambda.Function(this, 'WeightAPIHandler', {
 			runtime: lambda.Runtime.NODEJS_18_X,
 			code: lambda.Code.fromAsset('lambda'),
 			handler: 'weightApi.handler',
+			environment: {
+				WEIGHT_TABLE_NAME: weightTable.tableName
+			}
 		});
 
 		// Create API Gateway
@@ -60,6 +72,9 @@ export class CdkBackendStack extends cdk.Stack {
 		const auth = new apigateway.CognitoUserPoolsAuthorizer(this, 'WeightApiAuthorizer', {
 			cognitoUserPools: [userPool]
 		});
+
+		// Grant the Lambda function access to the DynamoDB table
+		weightTable.grantReadWriteData(weightApiLambda);
 
 		// Create API Gateway resource and method
 		const weightApiIntegration = new apigateway.LambdaIntegration(weightApiLambda);
