@@ -4,6 +4,8 @@ Just learning about CDK
 
 - v2 is latest
 
+- CDK is much nicer than SAM within ~1 hour
+
 ## CDK setup steps 
 
 - Install CDK
@@ -34,4 +36,3 @@ cdk bootstrap
 
 ## deploying
 cdk deploy
-```

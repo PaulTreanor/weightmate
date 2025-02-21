@@ -26,5 +26,15 @@ export class CdkBackendStack extends cdk.Stack {
 		weightEndpoint.addMethod('GET', weightApiIntegration);
 		weightEndpoint.addMethod('POST', weightApiIntegration); 
 
+		new cdk.CfnOutput(this, 'ApiEndpoint', {
+			description: 'API Gateway endpoint URL',
+			value: api.url
+		});
+
+		new cdk.CfnOutput(this, 'WeightApiLambdaArn', {
+			description: 'Weight API Lambda Function ARN',
+			value: weightApiLambda.functionArn
+		});
+
 	}
 }
