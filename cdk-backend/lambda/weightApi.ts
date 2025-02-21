@@ -102,7 +102,8 @@ const addWeights = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyR
     };
 };
 
-export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+
+const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     try {
         switch (event.httpMethod) {
             case 'GET':
@@ -135,3 +136,5 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
         };
     }
 };
+
+export { handler }
