@@ -27,13 +27,6 @@ export class CdkBackendStack extends cdk.Stack {
 			}
 		});
 
-		// Create API Gateway resource and method
-		const weightApiIntegration = new apigateway.LambdaIntegration(weightApiLambda);
-		// This makes the API route /weight
-		const weightEndpoint = api.root.addResource('weight');
-		weightEndpoint.addMethod('GET', weightApiIntegration);
-		weightEndpoint.addMethod('POST', weightApiIntegration); 
-
 		// **** COGNITO ****
 		// Create Cognito User Pool
 		const userPool = new cognito.UserPool(this, 'WeightmateUserPool', {
@@ -63,6 +56,23 @@ export class CdkBackendStack extends cdk.Stack {
 			preventUserExistenceErrors: true,
 		});
 
+		// API and lambda config
+		const auth = new apigateway.CognitoUserPoolsAuthorizer(this, 'WeightApiAuthorizer', {
+			cognitoUserPools: [userPool]
+		});
+
+		// Create API Gateway resource and method
+		const weightApiIntegration = new apigateway.LambdaIntegration(weightApiLambda);
+		// This makes the API route /weight
+		const weightEndpoint = api.root.addResource('weight');
+		weightEndpoint.addMethod('GET', weightApiIntegration, {
+			authorizer: auth,
+			authorizationType: apigateway.AuthorizationType.COGNITO,
+		});
+		weightEndpoint.addMethod('POST', weightApiIntegration, {
+			authorizer: auth,
+			authorizationType: apigateway.AuthorizationType.COGNITO,
+		}); 
 
 		// **** Outputs ****
 		new cdk.CfnOutput(this, 'ApiEndpoint', {

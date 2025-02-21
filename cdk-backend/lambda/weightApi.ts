@@ -45,7 +45,30 @@ const headers = {
 	'Access-Control-Allow-Credentials': 'true'
 };
 
-const getWeights = async (): Promise<APIGatewayProxyResult> => {
+const extractUserEmail = (event: APIGatewayProxyEvent): string | null => {
+	// For local testing, extract from Authorization header
+	if (process.env.AWS_SAM_LOCAL === 'true' || !event.requestContext.authorizer) {
+		try {
+			const authHeader = event.headers.Authorization || event.headers.authorization;
+			if (authHeader) {
+				const token = authHeader.replace('Bearer ', '');
+				const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+				return payload.email;
+			}
+		} catch (err) {
+			console.log('Error extracting email from token:', err);
+		}
+	}
+
+	// For production, get from Cognito authorizer claims
+	return event.requestContext.authorizer?.claims['email'] || null;
+}
+
+const getWeights = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+    const userEmail = extractUserEmail(event);
+
+    console.log('userEmail', userEmail);
+    console.log('Environment:', process.env.AWS_SAM_LOCAL ? 'local' : 'production');
     return {
         statusCode: 200,
         headers,
@@ -54,6 +77,9 @@ const getWeights = async (): Promise<APIGatewayProxyResult> => {
 };
 
 const addWeights = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+    const userEmail = extractUserEmail(event);
+    console.log('userEmail', userEmail);
+    console.log('Environment:', process.env.AWS_SAM_LOCAL ? 'local' : 'production');
     if (!event.body) {
         return {
             statusCode: 400,
@@ -108,7 +134,7 @@ const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResu
     try {
         switch (event.httpMethod) {
             case 'GET':
-                return await getWeights();
+                return await getWeights(event);
             case 'POST':
                 return await addWeights(event);
             case 'OPTIONS':
