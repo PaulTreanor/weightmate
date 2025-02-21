@@ -18,7 +18,13 @@ export class CdkBackendStack extends cdk.Stack {
 		// Create API Gateway
 		const api = new apigateway.RestApi(this, 'WeightApi', {
 			restApiName: 'Weight API',
-			description: 'For reading and updating user weight data'
+			description: 'For reading and updating user weight data',
+			defaultCorsPreflightOptions: {
+				allowOrigins: ['*'],
+				allowMethods: ['GET', 'POST', 'OPTIONS'],
+				allowHeaders: ['Content-Type', 'Authorization'],
+				allowCredentials: true
+			}
 		});
 
 		// Create API Gateway resource and method
