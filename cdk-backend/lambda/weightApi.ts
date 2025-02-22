@@ -1,5 +1,7 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import type { WeightEntry } from './types';
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient, QueryCommand, PutCommand, DeleteCommand } from "@aws-sdk/lib-dynamodb";
 
 const weightData: WeightEntry[] = [
     { date: '2023-01-15', weight: 90.2 },
@@ -38,6 +40,10 @@ const weightData: WeightEntry[] = [
     { date: '2025-01-22', weight: 97.4 },
 ];
 
+const ddbClient = new DynamoDBClient({});
+const docClient = DynamoDBDocumentClient.from(ddbClient);
+const tableName = process.env.WEIGHT_TABLE_NAME!;
+
 const headers = {
 	'Access-Control-Allow-Origin': '*',
 	'Access-Control-Allow-Headers': 'Content-Type,Authorization',
@@ -65,68 +71,93 @@ const extractUserEmail = (event: APIGatewayProxyEvent): string | null => {
 }
 
 const getWeights = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    const userEmail = extractUserEmail(event);
+	const userEmail = extractUserEmail(event);
+	if (!userEmail) {
+		return {
+			statusCode: 401,
+			headers,
+			body: JSON.stringify({ message: 'User email not found' }),
+		};
+	}
 
-    console.log('userEmail', userEmail);
-    console.log('Environment:', process.env.AWS_SAM_LOCAL ? 'local' : 'production');
-    return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({ weightData }),
-    };
+	try {
+		const command = new QueryCommand({
+			TableName: tableName,
+			KeyConditionExpression: 'userEmail = :email',
+			ExpressionAttributeValues: {
+				':email': userEmail
+			}
+		});
+
+		const response = await docClient.send(command);
+		return {
+			statusCode: 200,
+			headers,
+			body: JSON.stringify({ weightData: response.Items }),
+		};
+	} catch (error) {
+		console.error('Error fetching weights:', error);
+		return {
+			statusCode: 500,
+			headers,
+			body: JSON.stringify({ message: 'Error fetching weight data' }),
+		};
+	}
 };
 
 const addWeights = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    const userEmail = extractUserEmail(event);
-    console.log('userEmail', userEmail);
-    console.log('Environment:', process.env.AWS_SAM_LOCAL ? 'local' : 'production');
-    if (!event.body) {
-        return {
-            statusCode: 400,
-            headers,
-            body: JSON.stringify({
-                message: 'Missing request body',
-            }),
-        };
-    }
+	const userEmail = extractUserEmail(event);
+	if (!userEmail) {
+		return {
+			statusCode: 401,
+			headers,
+			body: JSON.stringify({ message: 'User email not found' }),
+		};
+	}
+
+	if (!event.body) {
+		return {
+			statusCode: 400,
+			headers,
+			body: JSON.stringify({ message: 'Missing request body' }),
+		};
+	}
+
 
     const newEntries: WeightEntry[] = JSON.parse(event.body);
+    
+	try {
+		// Save each entry to DynamoDB
+		const savePromises = newEntries.map(entry => {
+			const command = new PutCommand({
+				TableName: tableName,
+				Item: {
+					userEmail,
+					date: entry.date,
+					weight: entry.weight
+				}
+			});
+			return docClient.send(command);
+		});
 
-    // Validate the input
-    if (!Array.isArray(newEntries)) {
-        return {
-            statusCode: 400,
-            headers,
-            body: JSON.stringify({
-                message: 'Invalid input: Expected an array of weight entries',
-            }),
-        };
-    }
+		await Promise.all(savePromises);
 
-    // Validate each entry
-    for (const entry of newEntries) {
-        if (!entry.date || !entry.weight || typeof entry.weight !== 'number') {
-            return {
-                statusCode: 400,
-                headers,
-                body: JSON.stringify({
-                    message: 'Invalid entry: Each entry must have a date and weight',
-                }),
-            };
-        }
-    }
-
-    // In a real application, you would save these to a database
-    weightData.push(...newEntries);
-
-    return {
-        statusCode: 201,
-        headers,
-        body: JSON.stringify({
-            message: 'Weight entries added successfully',
-            entries: newEntries,
-        }),
-    };
+		return {
+			statusCode: 201,
+			headers,
+			body: JSON.stringify({
+				message: 'Weight entries added successfully',
+				entries: newEntries,
+			}),
+		};
+	} catch (error) {
+		console.error('Error saving weights:', error);
+		return {
+			statusCode: 500,
+			headers,
+			body: JSON.stringify({ message: 'Error saving weight data' }),
+		};
+	}
 };
 
 
