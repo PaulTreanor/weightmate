@@ -9,7 +9,7 @@ export class CdkBackendStack extends cdk.Stack {
 	constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
 		super(scope, id, props);
 
-		// Create DynamoDB table
+		// **** DynamoDB ****
 		const weightTable = new dynamodb.Table(this, 'WeightTable', {
 			partitionKey: { name: 'userEmail', type: dynamodb.AttributeType.STRING },
 			sortKey: { name: 'date', type: dynamodb.AttributeType.STRING },
@@ -17,7 +17,7 @@ export class CdkBackendStack extends cdk.Stack {
 			removalPolicy: cdk.RemovalPolicy.DESTROY, // For development only
 		});
 
-		// Create Lambda function
+		// **** Lambda ****
 		const weightApiLambda = new lambda.Function(this, 'WeightAPIHandler', {
 			runtime: lambda.Runtime.NODEJS_18_X,
 			code: lambda.Code.fromAsset('lambda'),
@@ -27,7 +27,7 @@ export class CdkBackendStack extends cdk.Stack {
 			}
 		});
 
-		// Create API Gateway
+		// **** API Gateway ****
 		const api = new apigateway.RestApi(this, 'WeightApi', {
 			restApiName: 'Weight API',
 			description: 'For reading and updating user weight data',
@@ -39,14 +39,14 @@ export class CdkBackendStack extends cdk.Stack {
 			}
 		});
 
-		// **** COGNITO ****
-		// Create Cognito User Pool
+		// **** COGNITO User Pool ****
 		const userPool = new cognito.UserPool(this, 'WeightmateUserPool', {
 			userPoolName: 'WeightmateUserPool',
 			selfSignUpEnabled: true,
-			autoVerify: { email: false },  // No email verification
+			// Email verification false makes testing easier
+			autoVerify: { email: false }, 
 			signInAliases: {
-				email: true  // Use email as the username
+				email: true 
 			},
 			passwordPolicy: {
 				minLength: 8,
@@ -58,12 +58,13 @@ export class CdkBackendStack extends cdk.Stack {
 			
 		});
 
+		// **** COGNITO User Pool Client ****
 		const userPoolClient = new cognito.UserPoolClient(this, 'WeightmateWebClient', {
 			userPool,
 			userPoolClientName: 'WeightmateWeb',
 			authFlows: {
 				userSrp: true,
-				userPassword: true,  // Enable simple email/password auth
+				userPassword: true,  
 			},
 			preventUserExistenceErrors: true,
 		});
@@ -72,12 +73,11 @@ export class CdkBackendStack extends cdk.Stack {
 		const auth = new apigateway.CognitoUserPoolsAuthorizer(this, 'WeightApiAuthorizer', {
 			cognitoUserPools: [userPool]
 		});
-
-		// Grant the Lambda function access to the DynamoDB table
 		weightTable.grantReadWriteData(weightApiLambda);
 
 		// Create API Gateway resource and method
 		const weightApiIntegration = new apigateway.LambdaIntegration(weightApiLambda);
+		
 		// This makes the API route /weight
 		const weightEndpoint = api.root.addResource('weight');
 		weightEndpoint.addMethod('GET', weightApiIntegration, {
